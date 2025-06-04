@@ -7,7 +7,7 @@ import {
     Toolbar,
     Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../store/AuthContext";
@@ -41,6 +41,7 @@ const VisuallyHiddenInput = styled("input")({
 function TopBar() {
     let title = "Photo Sharing App";
     const { user, logout } = useAuth();
+    console.log("user", user);
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const token = localStorage.getItem("token");

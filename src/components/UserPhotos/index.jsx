@@ -213,7 +213,11 @@ function UserPhotos() {
                         variant="outlined"
                         fullWidth
                         multiline
-                        value={newComment?.comment || ""}
+                        value={
+                            newComment?.photo_id === photo._id
+                                ? newComment?.comment
+                                : ""
+                        }
                         sx={{ mt: 2 }}
                         onChange={(e) => {
                             setNewComment({
