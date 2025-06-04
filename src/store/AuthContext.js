@@ -4,22 +4,10 @@ import http from "../lib/http";
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            const fetchUser = async () => {
-                try {
-                    const response = await http.get("/api/admin/me");
-                    setUser(response.data);
-                } catch (error) {
-                    console.error("Error fetching user:", error);
-                }
-            };
-            fetchUser();
-        }
-    }, []);
+    const [user, setUser] = useState(() => {
+        const newUser = localStorage.getItem("user");
+        return newUser ? JSON.parse(newUser) : null;
+    });
 
     const login = async (loginName, password) => {
         try {
@@ -30,6 +18,8 @@ export const AuthProvider = ({ children }) => {
             setUser(response.data.user);
             console.log("Login successful:", response.data.user);
             localStorage.setItem("token", response.data.token);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+            return response.data.user;
         } catch (error) {
             console.error("Error logging in:", error);
             throw error;
@@ -41,6 +31,8 @@ export const AuthProvider = ({ children }) => {
             const response = await http.post("/api/user", data);
             setUser(response.data.user);
             localStorage.setItem("token", response.data.token);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+            return response.data.user;
         } catch (error) {
             console.error("Error registering:", error);
             throw error;
@@ -51,6 +43,7 @@ export const AuthProvider = ({ children }) => {
         try {
             await http.post("/api/admin/logout");
             localStorage.removeItem("token");
+            localStorage.removeItem("user");
             setUser(null);
         } catch (error) {
             console.error("Error logging out:", error);
